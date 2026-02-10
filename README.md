@@ -37,30 +37,33 @@ You'll be working with two endpoints:
 
 ## index.js
 
-In `index.js`, you'll need to implement helper functions and two main functions. Each function should make the appropriate API call(s) and process the returned data.
+The code in `index.js` uses two helper functions and two main functions. Here's what each one does.
 
 ### Helper Functions
 
 #### `fetchAllProducts()`
 
-Write a helper function that:
-- Fetches all products from the API
-- Returns the products array from the response
+This helper calls the products API and returns the parsed JSON so other functions can use the data. **The function should return a Promise** that resolves to the API response object.
 
-**Example:**
+**Steps (high level):**
+1. Call the API to get all products.
+2. Parse the response as JSON.
+3. Return that data (a Promise that resolves to an object with a `products` array).
+
 ```js
 fetchAllProducts()
-// → Returns a Promise that resolves to an array of products
+// → Returns a Promise that resolves to the API response object (with a products array)
 ```
 
 #### `fetchProductById(productId)`
 
-Write a helper function that:
-- Takes a `productId` (number) as a parameter
-- Fetches the specific product by ID
-- Returns the product object
+This helper fetches one product by ID and returns its data so callers can use fields like `reviews` or `title`. **The function should return a Promise** that resolves to the product object.
 
-**Example:**
+**Steps (high level):**
+1. Call the API with the given product ID.
+2. Parse the response as JSON.
+3. Return that data (a Promise that resolves to the product object).
+
 ```js
 fetchProductById(1)
 // → Returns a Promise that resolves to a product object
@@ -72,35 +75,74 @@ fetchProductById(1)
 
 #### 1. `sumAllPrices()`
 
-Write a function that:
-- Uses `fetchAllProducts()` to get all products
-- Calculates and returns the **sum of all product prices**
+This function adds up every product’s price and returns the total. **The function should return a Promise** that resolves to that number.
 
-**Example:**
+**Steps (high level):**
+1. Get all products (using the helper).
+2. Read the `products` array from the response.
+3. Add up each product’s `price`.
+4. Return a Promise that resolves to that total (or 0 if there are no products).
+
 ```js
 sumAllPrices()
-// → Returns a Promise that resolves to a number representing the total sum of all product prices
+// → Returns a Promise that resolves to a number (sum of all product prices)
 ```
 
 ---
 
 #### 2. `getReviewerEmails(productId)`
 
-Write a function that:
-- Takes a `productId` (number) as a parameter
-- Uses `fetchProductById()` to get the specific product
-- Extracts and returns an array of **all reviewer email addresses** for that product
-- Handles cases where reviews might use `reviewerEmail` or `email` property
-- Filters out any reviews that don't have an email
+This function returns a list of email addresses from the reviews for one product. **The function should return a Promise** that resolves to that array.
 
-**Example:**
+**Steps (high level):**
+1. Fetch the product for the given ID (using the helper).
+2. Read the product’s `reviews` array.
+3. For each review, get the email (from `reviewerEmail` or `email`, whichever exists).
+4. Return a Promise that resolves to that list of emails.
+
 ```js
 getReviewerEmails(1)
-// → Returns a Promise that resolves to an array of email strings, e.g., ['john@example.com', 'jane@example.com']
+// → Returns a Promise that resolves to an array of email strings (or undefined/null for missing emails)
 ```
 
 ---
 
+### More Problems
+
+These functions follow the same pattern: use the helpers, then filter or compute over the product data.
+
+#### 3. `getBeautyProducts()`
+
+Write a function that returns only the products whose `tags` array includes the string "beauty". Use `fetchAllProducts()` to get the data, then filter the `products` array and return the result. **The function should return a Promise** that resolves to that array.
+
+```js
+getBeautyProducts()
+// → Returns a Promise that resolves to an array of product objects with the "beauty" tag
+```
+
+---
+
+#### 4. `getSumOfPricesForMediumWeightProducts()`
+
+Write a function that returns the sum of the prices of all products whose weight is between 3 and 6 pounds (inclusive). Use `fetchAllProducts()` to get the data, then filter by the product’s weight field and sum the prices of the matching products. **The function should return a Promise** that resolves to that number.
+
+```js
+getSumOfPricesForMediumWeightProducts()
+// → Returns a Promise that resolves to a number (sum of prices for products weighing between 3 and 6 lbs)
+```
+
+---
+
+#### 5. `getHighlyRatedProducts()`
+
+Write a function that returns only the products whose `rating` is greater than or equal to 4. Use `fetchAllProducts()` to get the data, then filter the `products` array by rating and return the result. **The function should return a Promise** that resolves to that array.
+
+```js
+getHighlyRatedProducts()
+// → Returns a Promise that resolves to an array of product objects with rating >= 4
+```
+
+---
 ## Tips
 
 - Remember that `fetch()` returns a Promise, so you'll need to use `.then()` to handle the response
@@ -114,14 +156,16 @@ getReviewerEmails(1)
 
 ## Testing Your Code
 
-You can test your functions by calling them in `index.js`:
+You can test your functions by calling them in `index.js`, or run the full test suite.
 
-Run your code with:
-```bash
-node index.js
-```
-
-Or run the test suite:
+**Run the test suite (recommended):**
 ```bash
 npm test
+```
+
+See the [Test Suite](#test-suite) section above for what each test checks.
+
+**Run your code manually:**
+```bash
+node index.js
 ```
