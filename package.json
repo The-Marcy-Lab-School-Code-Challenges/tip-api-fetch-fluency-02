@@ -2,6 +2,7 @@
   "name": "tip-api-fetch-fluency",
   "version": "1.0.0",
   "description": "API fetch fluency challenge with Jest tests",
+  "type": "commonjs",
   "main": "index.js",
   "scripts": {
     "test": "jest",
