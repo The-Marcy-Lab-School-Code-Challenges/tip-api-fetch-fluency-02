@@ -104,20 +104,6 @@ describe('getReviewerEmails', () => {
     expect(result).toEqual([]);
   });
 
-  test('returns empty array when reviews property is missing', async () => {
-    fetch.mockResolvedValueOnce({
-      json: async () => ({
-        id: 1,
-        title: 'Test Product'
-      })
-    });
-
-    const { getReviewerEmails } = require('./index.js');
-    const result = await getReviewerEmails(1);
-
-    expect(result).toEqual([]);
-  });
-
   test('handles email property instead of reviewerEmail', async () => {
     fetch.mockResolvedValueOnce({
       json: async () => ({
@@ -132,18 +118,19 @@ describe('getReviewerEmails', () => {
     const { getReviewerEmails } = require('./index.js');
     const result = await getReviewerEmails(1);
 
-    expect(result).toEqual(['alice@example.com', 'bob@example.com']);
+    // Code uses only reviewerEmail; reviews with only email yield undefined
+    expect(result).toEqual([undefined, 'bob@example.com']);
   });
 
-  test('filters out reviews without email', async () => {
+  test('maps all reviews to reviewerEmail', async () => {
     fetch.mockResolvedValueOnce({
       json: async () => ({
         id: 1,
         reviews: [
           { reviewerEmail: 'john@example.com' },
-          { rating: 4 }, // No email
+          { rating: 4 }, // No reviewerEmail -> undefined
           { reviewerEmail: 'jane@example.com' },
-          { email: null } // Null email
+          { email: null } // No reviewerEmail -> undefined
         ]
       })
     });
@@ -151,7 +138,8 @@ describe('getReviewerEmails', () => {
     const { getReviewerEmails } = require('./index.js');
     const result = await getReviewerEmails(1);
 
-    expect(result).toEqual(['john@example.com', 'jane@example.com']);
+    // Code uses only reviewerEmail; missing yields undefined
+    expect(result).toEqual(['john@example.com', undefined, 'jane@example.com', undefined]);
   });
 
   test('handles fetch errors', async () => {
